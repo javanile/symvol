@@ -48,6 +48,28 @@ symvol_move () {
 }
 
 ##
+symvol_copy () {
+    symvol_validate_source $1
+    symvol_validate_target $2
+    cd $1;
+    while IFS= read item || [[ -n "${item}" ]]; do
+	    [[ -z "${item}" ]] && continue
+	    [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
+        [[ -L "${item}" ]] && continue
+        echo ">>> copy: ${item}"
+        tar -uvf .symvol.tar ${item}
+    done < .symvol
+    echo ">>> update..."
+    cd ${WORKDIR};
+    mv $1/.symvol.tar $2
+    cd $2;
+    tar -xvf .symvol.tar;
+    rm -f .symvol.tar
+    echo ">>> copy done."
+    return 0
+}
+
+##
 symvol_link () {
     symvol_validate_source $1
     symvol_validate_target $2
@@ -77,10 +99,30 @@ symvol_drop () {
 }
 
 ##
+symvol_help () {
+    echo "==== SymVol ===="
+    echo "Manage symbolic links to create persisten volume on docker contanier"
+    echo ""
+    echo "  symvol [move|copy|link] SOURCE TARGET"
+    echo "  symvol [drop] SOURCE"
+    echo "  symvol [help]"
+    echo ""
+    echo "  move  Move SOURCE files to TARGET directory"
+    echo "  copy  Copy SOURCE files to TARGET directory"
+    echo "  link  Link SOURCE files to TARGET directory"
+    echo "  drop  Delete SOURCE files or symlinks"
+    echo "  help  Show this help"
+    echo ""
+    echo "More info at https://github.com/javanile/symvol"
+}
+
+##
 case $1 in
     drop)  symvol_drop $2; ;;
     move)  symvol_move $2 $3; ;;
+    copy)  symvol_copy $2 $3; ;;
     link)  symvol_link $2 $3; ;;
-    "")    symvol_exit "Command required type: move"; ;;
-    *)     symvol_exit "Unknown command type: move"; ;;
+    help)  symvol_help; ;;
+    "")    symvol_exit ">>> Require command: use 'symvol help'."; ;;
+    *)     symvol_exit ">>> Unknown command: use 'symvol help'."; ;;
 esac
