@@ -1,5 +1,5 @@
 .idea/
-tests/link/
-!tests/link/.gitkeep
-tests/symvol/
-!tests/symvol/.gitkeep
+tests/linked/
+!tests/linked/.gitkeep
+tests/volume/
+!tests/volume/.gitkeep
