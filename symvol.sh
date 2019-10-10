@@ -125,6 +125,22 @@ symvol_link () {
     return 0
 }
 
+## Change mode of source files and symlinks
+symvol_mode () {
+    symvol_validate_source $1
+    [[ -z "$2" ]] && symvol_exit 1 "Missing 'user:group' mode."
+    while IFS= read item || [[ -n "${item}" ]]; do
+	    [[ -z "${item}" ]] && continue
+	    [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
+        [[ "${item::1}" == "#" ]] && continue
+        symvol_echo "mode: ${item}"
+        chmod 777 -R $1/${item}
+        chown -R $2 $1/${item}
+    done < $1/.symvol
+    symvol_echo "mode done."
+    return 0
+}
+
 ## Remove source files and symlinks
 symvol_drop () {
     symvol_validate_source $1
@@ -145,6 +161,7 @@ symvol_help () {
     echo "Manage symbolic links to create persisten volume on docker contanier"
     echo ""
     echo "  symvol [move|copy|push|link] SOURCE TARGET"
+    echo "  symvol [mode] SOURCE USER:GROUP"
     echo "  symvol [drop] SOURCE"
     echo "  symvol [help]"
     echo ""
@@ -152,6 +169,7 @@ symvol_help () {
     echo "  copy  Safe copy SOURCE files to TARGET directory"
     echo "  push  Force copy SOURCE files to TARGET directory"
     echo "  link  Link SOURCE files to TARGET directory"
+    echo "  mode  Change mode of SOURCE files or symlinks"
     echo "  drop  Delete SOURCE files or symlinks"
     echo "  help  Show this help"
     echo ""
@@ -165,7 +183,8 @@ case $1 in
     copy)  symvol_copy $2 $3; ;;
     push)  symvol_push $2 $3; ;;
     link)  symvol_link $2 $3; ;;
+    mode)  symvol_mode $2 $3; ;;
     help)  symvol_help; ;;
-    "")    symvol_exit 1 ">>> Require command: use 'symvol help'."; ;;
-    *)     symvol_exit 1 ">>> Unknown command: use 'symvol help'."; ;;
+    "")    symvol_exit 1 "Require command: use 'symvol help'."; ;;
+    *)     symvol_exit 1 "Unknown command: use 'symvol help'."; ;;
 esac
