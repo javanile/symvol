@@ -1,3 +1,5 @@
 .idea/
+tests/link/
+!tests/link/.gitkeep
 tests/symvol/
 !tests/symvol/.gitkeep
