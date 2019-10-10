@@ -43,7 +43,7 @@ symvol_move () {
     cd $2;
     tar -xvf .symvol.tar;
     rm -f .symvol.tar
-    echo ">>> done."
+    echo ">>> move done."
     return 0
 }
 
@@ -57,9 +57,9 @@ symvol_link () {
 	    [[ -L "$2/${item}" ]] && continue
         echo ">>> link: ${item}"
         mkdir -p $(dirname $2/${item}) && true
-        ln -s $(readlink -f $1/${item}) $2/${item}
+        ln -s $(readlink -f $1/${item}) $(readlink -f $2/${item})
     done < $1/.symvol
-    echo ">>> done."
+    echo ">>> link done."
     return 0
 }
 
@@ -72,7 +72,7 @@ symvol_drop () {
         echo ">>> drop: ${item}"
         rm -fr $1/${item}
     done < $1/.symvol
-    echo ">>> done."
+    echo ">>> drop done."
     return 0
 }
 
