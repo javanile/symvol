@@ -24,8 +24,8 @@ symvol_exit () {
 symvol_validate_source () {
     [[ -z "$1" ]] && symvol_exit 1 "Missing source directory."
     [[ ! -d "$1" ]] && symvol_exit 1 "Source '$1' seem not a directory."
-    [[ ! -f "$1/.symvol" ]] && symvol_exit 1 "Missing .symvol file in '$1' source directory."
-    [[ ".symvol" != "$(head -n 1 $1/.symvol)" ]] && symvol_exit 1 "Missing .symvol as first line of '.symvol' file."
+    [[ ! -f "$1/.symvol" ]] && symvol_exit 1 "Missing '.symvol' file in '$1' source directory."
+    [[ ".symvol" != "$(head -n 1 $1/.symvol)" ]] && symvol_exit 1 "Missing '.symvol' as first line of '.symvol' file."
     return 0
 }
 
@@ -97,7 +97,7 @@ symvol_push () {
         symvol_echo "push: ${item}"
         tar -uvf .symvol.tar ${item}
     done < .symvol
-    symvol_echo "update..."
+    symvol_echo "processing..."
     cd ${WORKDIR};
     mv $1/.symvol.tar $2
     cd $2;
@@ -114,7 +114,7 @@ symvol_link () {
     while IFS= read item || [[ -n "${item}" ]]; do
 	    [[ -z "${item}" ]] && continue
 	    [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
-	    [[ -h "$(realpath -s $2/${item})" ]] && continue
+	    [[ -h "$(realpath -qs $2/${item})" ]] && continue
 	    [[ -L "$2/${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
         symvol_echo "link: ${item}"
@@ -133,7 +133,7 @@ symvol_drop () {
 	    [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
         symvol_echo "drop: ${item}"
-        rm -fr $1/${item}
+        rm -fr $(realpath -s $1/${item})
     done < $1/.symvol
     symvol_echo "drop done."
     return 0
@@ -163,6 +163,7 @@ case $1 in
     drop)  symvol_drop $2; ;;
     move)  symvol_move $2 $3; ;;
     copy)  symvol_copy $2 $3; ;;
+    push)  symvol_push $2 $3; ;;
     link)  symvol_link $2 $3; ;;
     help)  symvol_help; ;;
     "")    symvol_exit 1 ">>> Require command: use 'symvol help'."; ;;
