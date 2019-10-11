@@ -42,10 +42,10 @@ symvol_move () {
     symvol_validate_target $2
     cd $1;
     while IFS= read item || [[ -n "${item}" ]]; do
-	    [[ -z "${item}" ]] && continue
-	    [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
-        [[ -L "${item}" ]] && continue
+        [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
+        [[ -L "${item}" ]] && continue
         symvol_echo "move: ${item}"
         tar -uvf .symvol.tar ${item}
         rm -fr ${item}
@@ -67,10 +67,10 @@ symvol_copy () {
     [[ -f "$2/.symvol" ]] && symvol_exit 0 "Copy from '$1' was stopped because target '$2' is not empty."
     cd $1;
     while IFS= read item || [[ -n "${item}" ]]; do
-	    [[ -z "${item}" ]] && continue
-	    [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
-        [[ -L "${item}" ]] && continue
+        [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
+        [[ -L "${item}" ]] && continue
         symvol_echo "copy: ${item}"
         tar -uvf .symvol.tar ${item}
     done < .symvol
@@ -90,10 +90,10 @@ symvol_push () {
     symvol_validate_target $2
     cd $1;
     while IFS= read item || [[ -n "${item}" ]]; do
-	    [[ -z "${item}" ]] && continue
-	    [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
-        [[ -L "${item}" ]] && continue
+        [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
+        [[ -L "${item}" ]] && continue
         symvol_echo "push: ${item}"
         tar -uvf .symvol.tar ${item}
     done < .symvol
@@ -112,11 +112,11 @@ symvol_link () {
     symvol_validate_source $1
     symvol_validate_target $2
     while IFS= read item || [[ -n "${item}" ]]; do
-	    [[ -z "${item}" ]] && continue
-	    [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
-	    [[ -h "$(realpath -qs $2/${item})" ]] && continue
-	    [[ -L "$2/${item}" ]] && continue
+        [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
+        [[ -h "$(realpath -qs $2/${item})" ]] && continue
+        [[ -L "$2/${item}" ]] && continue
         symvol_echo "link: ${item}"
         mkdir -p $(dirname $2/${item}) && true
         ln -s $(readlink -f $1/${item}) $(readlink -f $2/${item})
@@ -130,9 +130,9 @@ symvol_mode () {
     symvol_validate_source $1
     [[ -z "$2" ]] && symvol_exit 1 "Missing 'user:group' mode."
     while IFS= read item || [[ -n "${item}" ]]; do
-	    [[ -z "${item}" ]] && continue
-	    [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
+        [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
         symvol_echo "mode: ${item}"
         chmod 777 -R $1/${item}
         chown -h -R $2 $(realpath -s $1/${item})
@@ -146,9 +146,9 @@ symvol_mode () {
 symvol_drop () {
     symvol_validate_source $1
     while IFS= read item || [[ -n "${item}" ]]; do
-	    [[ -z "${item}" ]] && continue
-	    [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
+        [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
         symvol_echo "drop: ${item}"
         rm -fr $(realpath -s $1/${item})
     done < $1/.symvol
