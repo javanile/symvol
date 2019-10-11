@@ -135,6 +135,7 @@ symvol_mode () {
         [[ "${item::1}" == "#" ]] && continue
         symvol_echo "mode: ${item}"
         chmod 777 -R $1/${item}
+        chown -h -R $2 $1/${item}
         chown -R $2 $1/${item}
     done < $1/.symvol
     symvol_echo "mode done."
