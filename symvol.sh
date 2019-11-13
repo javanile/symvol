@@ -6,10 +6,13 @@ set -e
 ## contact: info@javanile.org
 ## license: MIT License
 ##
-WORKDIR=$(echo $PWD)
+WORKDIR="$(echo "${PWD}")"
+TEMPTAR=".symvol.${RANDOM}.tar"
+
+## TODO: use 'getopt' ref: https://stackoverflow.com/a/39376824/999329
 
 ## Print message
-symvol_echo () {
+symvol_info () {
     echo -e "\e[1m>>> $1\e[0m"
     return 0
 }
@@ -40,23 +43,22 @@ symvol_validate_target () {
 symvol_move () {
     symvol_validate_source $1
     symvol_validate_target $2
+    symvol_info "move: '$1' to '$2'"
     cd $1;
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
         [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
         [[ -L "${item}" ]] && continue
-        symvol_echo "move: ${item}"
-        tar -uvf .symvol.tar ${item}
+        echo "${item}"
+        tar -uf ${TEMPTAR} ${item}
         rm -fr ${item}
     done < .symvol
-    symvol_echo "processing..."
-    cd ${WORKDIR};
-    mv $1/.symvol.tar $2
-    cd $2;
-    tar -xvf .symvol.tar;
-    rm -f .symvol.tar
-    symvol_echo "move done."
+    cd ${WORKDIR}
+    mv $1/${TEMPTAR} $2
+    cd $2
+    tar -xf ${TEMPTAR}
+    rm -f ${TEMPTAR}
     return 0
 }
 
@@ -65,22 +67,20 @@ symvol_copy () {
     symvol_validate_source $1
     symvol_validate_target $2
     [[ -f "$2/.symvol" ]] && symvol_exit 0 "Copy from '$1' was stopped because target '$2' is not empty."
+    symvol_info "copy: '$1' to '$2'"
     cd $1;
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
         [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
         [[ -L "${item}" ]] && continue
-        symvol_echo "copy: ${item}"
-        tar -uvf .symvol.tar ${item}
+        tar -uf ${TEMPTAR} ${item}
     done < .symvol
-    symvol_echo "processing..."
-    cd ${WORKDIR};
-    mv $1/.symvol.tar $2
-    cd $2;
-    tar -xvf .symvol.tar;
-    rm -f .symvol.tar
-    symvol_echo "copy done."
+    cd ${WORKDIR}
+    mv $1/${TEMPTAR} $2
+    cd $2
+    tar -xf ${TEMPTAR}
+    rm -f ${TEMPTAR}
     return 0
 }
 
@@ -88,22 +88,20 @@ symvol_copy () {
 symvol_push () {
     symvol_validate_source $1
     symvol_validate_target $2
+    symvol_info "push: '$1' to '$2'"
     cd $1;
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
         [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
         [[ -L "${item}" ]] && continue
-        symvol_echo "push: ${item}"
-        tar -uvf .symvol.tar ${item}
+        tar -uf ${TEMPTAR} ${item}
     done < .symvol
-    symvol_echo "processing..."
     cd ${WORKDIR};
-    mv $1/.symvol.tar $2
+    mv $1/${TEMPTAR} $2
     cd $2;
-    tar -xvf .symvol.tar;
-    rm -f .symvol.tar
-    symvol_echo "push done."
+    tar -xf ${TEMPTAR}
+    rm -f ${TEMPTAR}
     return 0
 }
 
@@ -111,48 +109,48 @@ symvol_push () {
 symvol_link () {
     symvol_validate_source $1
     symvol_validate_target $2
+    symvol_info "link: '$1' to '$2'"
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
         [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
         [[ -h "$(realpath -qs $2/${item})" ]] && continue
         [[ -L "$2/${item}" ]] && continue
-        symvol_echo "link: ${item}"
+        echo ${item}
         mkdir -p $(dirname $2/${item}) && true
         ln -s $(readlink -f $1/${item}) $(readlink -f $2/${item})
     done < $1/.symvol
-    symvol_echo "link done."
     return 0
 }
 
 ## Change mode of source files and symlinks
 symvol_mode () {
     symvol_validate_source $1
+    symvol_info "mode: $1"
     [[ -z "$2" ]] && symvol_exit 1 "Missing 'user:group' mode."
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
         [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
-        symvol_echo "mode: ${item}"
+        echo ${item}
         chmod 777 -R $1/${item}
         chown -h -R $2 $(realpath -s $1/${item})
         chown -R $2 $1/${item}
     done < $1/.symvol
-    symvol_echo "mode done."
     return 0
 }
 
 ## Remove source files and symlinks
 symvol_drop () {
     symvol_validate_source $1
+    symvol_info "drop: '$1'"
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
         [[ ! -f "$1/${item}" ]] && [[ ! -d "$1/${item}" ]] && continue
-        symvol_echo "drop: ${item}"
+        echo ${item}
         rm -fr $(realpath -s $1/${item})
     done < $1/.symvol
-    symvol_echo "drop done."
     return 0
 }
 
