@@ -1,0 +1,16 @@
+source
+source/dir0
+source/dir0/dir1
+source/dir0/dir1/file1.txt
+source/dir0/dir2
+source/dir0/dir2/file2.txt
+source/dir0/file0.txt
+source/dir3
+source/dir3/file3.txt
+source/file.txt
+source/.gitkeep
+source/.symvol
+target
+target/.gitkeep
+volume
+volume/.gitkeep
