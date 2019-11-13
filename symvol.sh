@@ -55,10 +55,12 @@ symvol_move () {
         rm -fr ${item}
     done < .symvol
     cd ${WORKDIR}
-    mv $1/${TEMPTAR} $2
-    cd $2
-    tar -xf ${TEMPTAR}
-    rm -f ${TEMPTAR}
+    if [[ -f $1/${TEMPTAR} ]]; then
+        mv $1/${TEMPTAR} $2
+        cd $2
+        tar -xf ${TEMPTAR}
+        rm -f ${TEMPTAR}
+    fi
     return 0
 }
 
@@ -77,10 +79,12 @@ symvol_copy () {
         tar -uf ${TEMPTAR} ${item}
     done < .symvol
     cd ${WORKDIR}
-    mv $1/${TEMPTAR} $2
-    cd $2
-    tar -xf ${TEMPTAR}
-    rm -f ${TEMPTAR}
+    if [[ -f $1/${TEMPTAR} ]]; then
+        mv $1/${TEMPTAR} $2
+        cd $2
+        tar -xf ${TEMPTAR}
+        rm -f ${TEMPTAR}
+    fi
     return 0
 }
 
@@ -98,10 +102,12 @@ symvol_push () {
         tar -uf ${TEMPTAR} ${item}
     done < .symvol
     cd ${WORKDIR};
-    mv $1/${TEMPTAR} $2
-    cd $2;
-    tar -xf ${TEMPTAR}
-    rm -f ${TEMPTAR}
+    if [[ -f $1/${TEMPTAR} ]]; then
+        mv $1/${TEMPTAR} $2
+        cd $2;
+        tar -xf ${TEMPTAR}
+        rm -f ${TEMPTAR}
+    fi
     return 0
 }
 
@@ -126,7 +132,7 @@ symvol_link () {
 ## Change mode of source files and symlinks
 symvol_mode () {
     symvol_validate_source $1
-    symvol_info "mode: $1"
+    symvol_info "mode: '$1'"
     [[ -z "$2" ]] && symvol_exit 1 "Missing 'user:group' mode."
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
