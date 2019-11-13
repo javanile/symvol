@@ -1,5 +1,5 @@
 .idea/
-tests/linked/
-!tests/linked/.gitkeep
-tests/volume/
-!tests/volume/.gitkeep
+tests/assert/
+!tests/assert/source/.gitkeep
+!tests/assert/target/.gitkeep
+!tests/assert/volume/.gitkeep
