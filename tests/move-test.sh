@@ -1,13 +1,17 @@
 #!/bin/bash
 set -e
 
-cd $(dirname "$0")/assert
-trap "echo $0: Test fail." ERR
+testdir=$(dirname "$0")/assert
 current=$(mktemp /tmp/symvol.test.XXXXXX)
+
+mkdir -p ${testdir}
+cd ${testdir}
+
+trap "echo $0: Test fail." ERR
 
 assert () {
     echo "---"
-    find * -print | sort - > ${current}
+    find * -printf "%y %p\\n" | sort - > ${current}
     diff ../$1.txt ${current}
 }
 

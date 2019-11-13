@@ -1,14 +1,14 @@
-source
-source/dir0
-source/dir0/dir2
-source/dir0/dir2/file2.txt
-source/dir0/file0.txt
-target
-target/dir0
-target/dir0/dir1
-target/dir0/dir1/file1.txt
-target/dir3
-target/dir3/file3.txt
-target/file.txt
-target/.symvol
-volume
+d source
+d source/dir0
+d source/dir0/dir2
+d target
+d target/dir0
+d target/dir0/dir1
+d target/dir3
+d volume
+f source/dir0/dir2/file2.txt
+f source/dir0/file0.txt
+f target/dir0/dir1/file1.txt
+f target/dir3/file3.txt
+f target/file.txt
+f target/.symvol
