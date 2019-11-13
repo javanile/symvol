@@ -8,9 +8,7 @@ source/dir0/file0.txt
 source/dir3
 source/dir3/file3.txt
 source/file.txt
-source/.gitkeep
 source/.symvol
 target
-target/.gitkeep
+target/dir0
 volume
-volume/.gitkeep
