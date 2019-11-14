@@ -48,8 +48,8 @@ symvol_move () {
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ -h "$(realpath -qs ${item})" ]] && continue
         [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
-        [[ -L "${item}" ]] && continue
         echo "${item}"
         tar -uf ${TEMPTAR} ${item}
         rm -fr ${item}
@@ -74,8 +74,8 @@ symvol_copy () {
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ -h "$(realpath -qs ${item})" ]] && continue
         [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
-        [[ -L "${item}" ]] && continue
         tar -uf ${TEMPTAR} ${item}
     done < .symvol
     cd ${WORKDIR}
@@ -97,8 +97,8 @@ symvol_push () {
     while IFS= read item || [[ -n "${item}" ]]; do
         [[ -z "${item}" ]] && continue
         [[ "${item::1}" == "#" ]] && continue
+        [[ -h "$(realpath -qs ${item})" ]] && continue
         [[ ! -f "${item}" ]] && [[ ! -d "${item}" ]] && continue
-        [[ -L "${item}" ]] && continue
         tar -uf ${TEMPTAR} ${item}
     done < .symvol
     cd ${WORKDIR};
@@ -183,13 +183,13 @@ symvol_help () {
 
 ## Entrypoint
 case $1 in
-    drop)  symvol_drop $2; ;;
-    move)  symvol_move $2 $3; ;;
-    copy)  symvol_copy $2 $3; ;;
-    push)  symvol_push $2 $3; ;;
-    link)  symvol_link $2 $3; ;;
-    mode)  symvol_mode $2 $3; ;;
-    help)  symvol_help; ;;
-    "")    symvol_exit 1 "Require command: use 'symvol help'."; ;;
-    *)     symvol_exit 1 "Unknown command: use 'symvol help'."; ;;
+    drop) symvol_drop $2; ;;
+    move) symvol_move $2 $3; ;;
+    copy) symvol_copy $2 $3; ;;
+    push) symvol_push $2 $3; ;;
+    link) symvol_link $2 $3; ;;
+    mode) symvol_mode $2 $3; ;;
+    help) symvol_help; ;;
+    "")   symvol_exit 1 "Require command: use 'symvol help'."; ;;
+    *)    symvol_exit 1 "Unknown command: use 'symvol help'."; ;;
 esac
