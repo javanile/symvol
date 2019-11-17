@@ -8,4 +8,6 @@ set -e
 ## MIT License
 ##
 
-./tests/move-test.sh
+testdir=$(dirname "$0")/tests
+
+${testdir}/move-test.sh

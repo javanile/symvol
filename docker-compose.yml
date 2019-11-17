@@ -4,4 +4,10 @@ services:
   symvol:
     build: .
     volumes:
-      - /var/lib/
+      - ./:/work/
+
+  bashcov:
+    image: rubygem/bashcov
+    working_dir: /work
+    volumes:
+      - ./:/work/
