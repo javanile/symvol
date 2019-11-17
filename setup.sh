@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
-
+##
+## SymVol v0.0.2
+## -------------
+## by Francesco Bianco
+## info@javanile.org
+## MIT License
+##
 SYMVOL_BIN=/usr/local/bin/symvol
 SYMVOL_SRC=https://javanile.github.io/symvol/symvol.sh
 
