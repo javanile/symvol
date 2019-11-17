@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 ##
-## ==== SymVol ====
+## SymVol v0.0.2
+## -------------
 ## by Francesco Bianco
-## contact: info@javanile.org
-## license: MIT License
+## info@javanile.org
+## MIT License
 ##
 WORKDIR="$(echo "${PWD}")"
 TEMPTAR=".symvol.${RANDOM}.tar"
