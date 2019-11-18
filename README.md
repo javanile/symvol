@@ -1,4 +1,8 @@
 # symvol
+
+[![Build Status](https://travis-ci.org/javanile/symvol.svg?branch=master)](https://travis-ci.org/javanile/symvol)
+
+
 Symbolic Volume for Docker
 
 
