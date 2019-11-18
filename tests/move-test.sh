@@ -22,11 +22,11 @@ cp -rf ../fixtures/. source
 assert before
 
 echo "---> Assert #1"
-../../symvol.sh move source target
+${testdir}/../../symvol.sh move source target
 assert move-test-assert-1
 
 echo "---> Assert #2"
-../../symvol.sh move target source
+${testdir}/../../symvol.sh move target source
 assert move-test-assert-2
 
 echo "$0: Test success."
