@@ -5,9 +5,13 @@
 
 Symbolic Volume for Docker
 
+> Strumento la conversione delle cartelle di storage in link symbolici e volumi dockerizzati
 
+```
 docker-compose build symvol
+```
 
+```
 docker-compose run --rm bashcov /work/tests.sh
-
+```
 
